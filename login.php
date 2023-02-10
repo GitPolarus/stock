@@ -1,4 +1,8 @@
-<?php require_once("./partials/header.php") ?>
+<?php require_once("./partials/header.php");
+if ($logged) {
+    header("location:./index.php");
+}
+?>
 
 <div class="text-center p-5">
     <main class="form-signin w-25 m-auto">

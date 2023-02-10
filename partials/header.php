@@ -1,5 +1,11 @@
 <?php
 session_start();
+/* 
+Check if the user data existe in the session and store the boolean value in the variable 
+$logged
+Just with $logged we can know if the user is connected or not
+*/
+$logged = isset($_SESSION["user"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +17,7 @@ session_start();
     <title>Gestion Stock</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -27,46 +34,49 @@ session_start();
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="index.php">Acceuil</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="produits.php">Produits</a>
-                    </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="login.php">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="register.php">Register</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Logout</a>
-                    </li>
+                    <?php if (!$logged): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.php">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="register.php">Register</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="produits.php">Produits</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./logout.php">Logout</a>
+                        </li>
+                    <?php endif ?>
 
                 </ul>
 
             </div>
         </div>
     </nav>
+    <div class="container">
+        <?php if (isset($_SESSION["errors"])): ?>
+            <ul class="alert alert-danger list-group">
+                <?php foreach ($_SESSION["errors"] as $error): ?>
+                    <li class="list-group-item bg-danger text-white">
+                        <?= $error ?>
+                    </li>
+                <?php endforeach; ?>
 
-    <?php if (isset($_SESSION["errors"])): ?>
-        <ul class="alert alert-danger list-group">
-            <?php foreach ($_SESSION["errors"] as $error): ?>
-                <li class="list-group-item bg-danger text-white">
-                    <?= $error ?>
-                </li>
-            <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
 
-        </ul>
-    <?php endif; ?>
+        <?php if (isset($_SESSION["error"])): ?>
+            <div class="alert alert-danger">
+                <?= $_SESSION["error"] ?>
+            </div>
+        <?php endif; ?>
 
-    <?php if (isset($_SESSION["error"])): ?>
-        <div class="alert alert-danger">
-            <?= $_SESSION["error"] ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION["success"])): ?>
-        <div class="alert alert-success ">
-            <?= $_SESSION["success"] ?>
-        </div>
-    <?php endif; ?>
+        <?php if (isset($_SESSION["success"])): ?>
+            <div class="alert alert-success ">
+                <?= $_SESSION["success"] ?>
+            </div>
+        <?php endif; ?>
+    </div>

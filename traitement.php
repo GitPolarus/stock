@@ -1,25 +1,7 @@
 <?php
 require_once("./connexion.php");
 session_start();
-$errors = [];
-/**
- * get value from form input field
- * @param mixed $inputName
- * @param bool $required
- * 
- * @return [String]
- */
-function getInputValue($inputName, $required = true)
-{
-    global $errors;
-    if (empty($_REQUEST[$inputName] && $required)) {
-        array_push($errors, "$inputName is empty");
-        $_SESSION["errors"] = $errors;
-        return null;
-    }
-
-    return htmlspecialchars($_REQUEST[$inputName]);
-}
+require_once("./helper/functions.php");
 
 if (isset($_REQUEST["register"])) {
     $name = getInputValue("name");
@@ -72,6 +54,8 @@ if (isset($_REQUEST["login"])) {
     if (!empty($user)) {
         if (password_verify($password, $user["password"])) {
             $_SESSION["success"] = "Use logged in successfully";
+            // Store user informations in the session to control whether or not the user already logged or not
+            $_SESSION["user"] = $user;
             header("location:./index.php");
         } else {
             $_SESSION["error"] = "incorrect password";
