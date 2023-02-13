@@ -22,6 +22,15 @@ if ($updating) {
     $produit = $updateStmt->fetch(PDO::FETCH_ASSOC);
 }
 
+if (isset($_GET["search"])) {
+    $search = htmlspecialchars($_GET['search']);
+    $sql = "SELECT p.*, u.nom  from produits p, users u WHERE p.user_id = u.id  AND 
+    (p.description  LIKE :description OR p.libelle LIKE :libelle);";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(["description" => "%$search%", "libelle" => "%$search%"]);
+    $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 ?>
 <div class="text-center p-5">
 
@@ -94,57 +103,73 @@ if ($updating) {
 
             </div>
             <div class="col-9">
-                <h2>Product List</h2>
+                <div class="d-flex justify-between align-items-center mb-4">
+                    <h2 class="text-danger text-uppercase">Product List</h2>
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-sm">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Label</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Created By</th>
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($produits as $p): ?>
-                                <tr>
-                                    <td>
-                                        <?= $p["id"] ?>
-                                    </td>
-                                    <td>
-                                        <?= $p["libelle"] ?>
-                                    </td>
-                                    <td>
-                                        <?= $p["description"] ?>
-                                    </td>
-                                    <td>
-                                        <?= $p["prix_unitaire"] ?>
-                                    </td>
-                                    <td>
-                                        <?= $p["quantite"] ?>
-                                    </td>
-                                    <td>
-                                        <?= $p["nom"] ?>
-                                    </td>
-
-                                    <td>
-                                        <a href="./produits.php?updateId=<?= $p["id"] ?>" class="btn btn-sm btn-info"
-                                            title="Modify"> <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <a href="./traitementProduit.php?deleteId=<?= $p["id"] ?>"
-                                            class="btn btn-sm btn-danger" title="Delete"> <i class="bi bi-trash"></i>
-                                        </a>
-                                    </td>
-
-                                </tr>
-                            <?php endforeach ?>
-                        </tbody>
-                    </table>
+                    <form method="get" class="w-50 ms-auto">
+                        <div class="input-group mb-3">
+                            <input type="search" class="form-control" name="search" placeholder="Search"
+                                aria-label="search" />
+                            <button class="btn btn-secondary"> <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
                 </div>
+                <?php if (count($produits) > 0): ?>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Label</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Created By</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($produits as $p): ?>
+                                    <tr>
+                                        <td>
+                                            <?= $p["id"] ?>
+                                        </td>
+                                        <td>
+                                            <?= $p["libelle"] ?>
+                                        </td>
+                                        <td>
+                                            <?= $p["description"] ?>
+                                        </td>
+                                        <td>
+                                            <?= $p["prix_unitaire"] ?>
+                                        </td>
+                                        <td>
+                                            <?= $p["quantite"] ?>
+                                        </td>
+                                        <td>
+                                            <?= $p["nom"] ?>
+                                        </td>
+
+                                        <td>
+                                            <a href="./produits.php?updateId=<?= $p["id"] ?>" class="btn btn-sm btn-info"
+                                                title="Modify"> <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="./traitementProduit.php?deleteId=<?= $p["id"] ?>"
+                                                class="btn btn-sm btn-danger" title="Delete"> <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+
+
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-warning">Nothing Found</div>
+                <?php endif; ?>
             </div>
         </div>
 
